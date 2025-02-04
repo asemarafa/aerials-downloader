@@ -215,18 +215,22 @@ def downloadFilteredAerials(aerials):
         for aerial in filteredAerials:
             yield aerial_name(aerial)
 
-    # Use iterfzf to allow the user to filter the aerials
-    selected_aerials = iterfzf(
-        aerial_generator(),
-        multi=True,
-    )
+    print("\nEnter 'all' to download all filtered aerials, or press Enter to use fuzzy search to select:")
+    select_all_input = input("> ").strip().lower() # Get input
 
-    # Filter filteredAerials based on the user's selection
-    filteredAerials = [
-        aerial for aerial in filteredAerials if aerial_name(aerial) in selected_aerials
-    ]
-    
-    startDownloadOfAerialsList(filteredAerials)
+    if select_all_input == "all":
+        filteredAerials_to_download = filteredAerials # Download all
+        print("Downloading all filtered aerials...")
+    else: # Proceed with iterfzf selection
+        selected_aerials_names = iterfzf(
+            aerial_generator(),
+            multi=True,
+        )
+        filteredAerials_to_download = [
+            aerial for aerial in filteredAerials if aerial_name(aerial) in selected_aerials_names
+        ]
+
+    startDownloadOfAerialsList(filteredAerials_to_download)
 
 def startDownloadOfAerialsList(list):
     print("Downloading " + str(len(list)) + " aerials")
